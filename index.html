@@ -34,6 +34,7 @@
             color: var(--text);
             background-color: var(--light);
             scroll-behavior: smooth;
+            min-width: 320px; /* Prevent extreme shrinking */
         }
 
         /* Dark Mode Styles */
@@ -87,6 +88,7 @@
             margin-left: auto;
             margin-right: 1rem;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
         .dark-mode-toggle i {
@@ -125,6 +127,7 @@
             align-items: center;
             max-width: 1200px;
             margin: 0 auto;
+            gap: 1rem;
         }
 
         .logo {
@@ -135,6 +138,8 @@
             gap: 0.5rem;
             font-family: 'Comic Neue', cursive;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+            white-space: nowrap; /* Prevent text wrapping */
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
         .logo i {
@@ -145,6 +150,8 @@
         .nav-links {
             display: flex;
             gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
 
         .nav-links a {
@@ -155,6 +162,7 @@
             padding: 0.5rem 1rem;
             border-radius: 50px;
             font-size: 0.95rem;
+            white-space: nowrap; /* Prevent text wrapping */
         }
 
         .nav-links a:hover {
@@ -169,6 +177,7 @@
             color: white;
             font-size: 1.5rem;
             cursor: pointer;
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
         /* Hero Section */
@@ -201,7 +210,7 @@
         }
 
         .hero h1 {
-            font-size: 2.8rem;
+            font-size: clamp(2rem, 5vw, 2.8rem); /* Responsive font size */
             margin-bottom: 1.5rem;
             line-height: 1.2;
             text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
@@ -209,7 +218,7 @@
         }
 
         .hero p {
-            font-size: 1.3rem;
+            font-size: clamp(1rem, 3vw, 1.3rem); /* Responsive font size */
             margin-bottom: 2.5rem;
             opacity: 0.9;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
@@ -271,7 +280,7 @@
         }
 
         .section-title h2 {
-            font-size: 2.3rem;
+            font-size: clamp(1.8rem, 4vw, 2.3rem); /* Responsive font size */
             display: inline-block;
             padding-bottom: 0.5rem;
             color: var(--primary);
@@ -485,8 +494,12 @@
             gap: 3rem;
         }
 
+        .footer-col {
+            min-width: 0; /* Prevent flexbox overflow */
+        }
+
         .footer-col h3 {
-            font-size: 1.4rem;
+            font-size: clamp(1.2rem, 3vw, 1.4rem); /* Responsive font size */
             margin-bottom: 1.8rem;
             position: relative;
             padding-bottom: 0.8rem;
@@ -525,6 +538,10 @@
             transition: all 0.3s ease;
             display: inline-block;
             font-size: 0.95rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
         }
 
         .footer-col ul li a:hover {
@@ -537,6 +554,7 @@
             display: flex;
             gap: 1.2rem;
             margin-top: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .social-links a {
@@ -550,6 +568,7 @@
             color: white;
             transition: all 0.3s ease;
             font-size: 1.2rem;
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
         .social-links a:hover {
@@ -604,6 +623,10 @@
 
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
+            .navbar {
+                flex-wrap: wrap;
+            }
+            
             .nav-links {
                 position: fixed;
                 top: 70px;
@@ -653,6 +676,41 @@
             .footer-container {
                 grid-template-columns: 1fr;
                 gap: 2rem;
+            }
+        }
+
+        /* Extreme small screen adjustments */
+        @media (max-width: 400px) {
+            .navbar {
+                padding: 0.5rem;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .logo i {
+                font-size: 1.5rem;
+            }
+            
+            .dark-mode-toggle {
+                width: 45px;
+                height: 25px;
+                margin-right: 0.5rem;
+            }
+            
+            .hero {
+                padding: 4rem 1rem;
+            }
+            
+            .topics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .social-links a {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
             }
         }
 

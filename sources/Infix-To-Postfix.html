@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expression Notation Converter</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --accent: #fd79a8;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #f5f6fa;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary);
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-top: 0;
+            font-size: 1.8rem;
+        }
+        
+        h3 {
+            color: var(--accent);
+            margin-top: 25px;
+        }
+        
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            border-left: 3px solid var(--secondary);
+            animation: slideIn 0.5s ease-in-out;
+        }
+        
+        .example {
+            background: #f0f5ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 3px solid var(--accent);
+        }
+        
+        .step-breakdown {
+            margin: 20px 0;
+            border-collapse: collapse;
+            width: 100%;
+            animation: fadeIn 1s ease-in-out;
+        }
+        
+        .step-breakdown th, .step-breakdown td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .step-breakdown th {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .step-breakdown tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="floating">Expression Notation Converter</h1>
+            <p class="subtitle">Learn how to convert between infix, postfix, and prefix notations</p>
+        </header>
+        
+        <section class="card">
+            <h2>Algorithm for Converting Infix to Postfix</h2>
+            <ol>
+                <li>Initialize an empty stack and an empty output string.</li>
+                <li>Iterate through the infix expression from left to right.</li>
+                <li>If the character is an operand (letter or number), add it to the output string.</li>
+                <li>If the character is an operator (+, -, *, /, etc.):
+                    <ul>
+                        <li>If the stack is empty or the top of the stack has lower precedence, push the operator onto the stack.</li>
+                        <li>Otherwise, pop operators from the stack and add them to the output string until the stack is empty or the top of the stack has lower precedence, then push the current operator onto the stack.</li>
+                    </ul>
+                </li>
+                <li>If the character is a left parenthesis, push it onto the stack.</li>
+                <li>If the character is a right parenthesis, pop operators from the stack and add them to the output string until a left parenthesis is encountered, then discard the left parenthesis.</li>
+                <li>After iterating through the entire infix expression, pop any remaining operators from the stack and add them to the output string.</li>
+            </ol>
+            
+            <h3>Example</h3>
+            <p>Let's convert the infix expression: <span class="highlight">A + B * C</span></p>
+            
+            <div class="example">
+                <p>1. A is an operand, so add it to the output string: A</p>
+                <p>2. + is an operator, so push it onto the stack: [+</p>
+                <p>3. B is an operand, so add it to the output string: A B</p>
+                <p>4. * is an operator with higher precedence than +, so push it onto the stack: [+, *</p>
+                <p>5. C is an operand, so add it to the output string: A B C</p>
+                <p>6. Pop operators from the stack and add them to the output string:
+                    <ul>
+                        <li>Pop * and add it to the output string: A B C *</li>
+                        <li>Pop + and add it to the output string: A B C * +</li>
+                    </ul>
+                </p>
+                <p>The postfix expression is: <span class="highlight">A B C * +</span></p>
+            </div>
+            
+            <h3>Step-by-Step Breakdown</h3>
+            <table class="step-breakdown">
+                <thead>
+                    <tr>
+                        <th>Infix</th>
+                        <th>Stack</th>
+                        <th>Output</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>A</td>
+                        <td>[]</td>
+                        <td>A</td>
+                    </tr>
+                    <tr>
+                        <td>+</td>
+                        <td>[+]</td>
+                        <td>A</td>
+                    </tr>
+                    <tr>
+                        <td>B</td>
+                        <td>[+]</td>
+                        <td>A B</td>
+                    </tr>
+                    <tr>
+                        <td>*</td>
+                        <td>[+, *]</td>
+                        <td>A B</td>
+                    </tr>
+                    <tr>
+                        <td>C</td>
+                        <td>[+, *]</td>
+                        <td>A B C</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>[+]</td>
+                        <td>A B C *</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>[]</td>
+                        <td>A B C * +</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <section class="card">
+            <h2>Algorithm for Converting Infix to Prefix/Polish Notation</h2>
+            <ol>
+                <li>Reverse the infix expression.</li>
+                <li>Convert the reversed infix expression to postfix notation using the standard infix-to-postfix algorithm.</li>
+                <li>Reverse the postfix expression to get the prefix notation.</li>
+            </ol>
+            
+            <h3>Infix-to-Postfix Algorithm</h3>
+            <ol>
+                <li>Initialize an empty stack and an empty output string.</li>
+                <li>Iterate through the infix expression from left to right.</li>
+                <li>If the character is an operand, add it to the output string.</li>
+                <li>If the character is an operator:
+                    <ul>
+                        <li>If the stack is empty or the top of the stack has lower precedence, push the operator onto the stack.</li>
+                        <li>Otherwise, pop operators from the stack and add them to the output string until the stack is empty or the top of the stack has lower precedence, then push the current operator onto the stack.</li>
+                    </ul>
+                </li>
+                <li>If the character is a left parenthesis, push it onto the stack.</li>
+                <li>If the character is a right parenthesis, pop operators from the stack and add them to the output string until a left parenthesis is encountered, then discard the left parenthesis.</li>
+                <li>After iterating through the entire infix expression, pop any remaining operators from the stack and add them to the output string.</li>
+            </ol>
+            
+            <h3>Example</h3>
+            <p>Let's convert the infix expression: <span class="highlight">(A + B) * C</span></p>
+            
+            <div class="example">
+                <p><strong>Step 1:</strong> Reverse the infix expression</p>
+                <p>The reversed infix expression is: <span class="highlight">C * (B + A)</span></p>
+                
+                <p><strong>Step 2:</strong> Convert the reversed infix expression to postfix notation</p>
+                <p>Using the infix-to-postfix algorithm:</p>
+                
+                <p>1. C is an operand, so add it to the output string: C</p>
+                <p>2. * is an operator, so push it onto the stack: [*</p>
+                <p>3. ( is a left parenthesis, so push it onto the stack: [*, (</p>
+                <p>4. B is an operand, so add it to the output string: C B</p>
+                <p>5. + is an operator, so push it onto the stack: [*, (, +</p>
+                <p>6. A is an operand, so add it to the output string: C B A</p>
+                <p>7. ) is a right parenthesis, so pop operators from the stack and add them to the output string: C B A +</p>
+                <p>8. Pop the remaining operator from the stack and add it to the output string: C B A + *</p>
+                
+                <p>The postfix expression is: <span class="highlight">C B A + *</span></p>
+                
+                <p><strong>Step 3:</strong> Reverse the postfix expression</p>
+                <p>The prefix expression is: <span class="highlight">* + A B C</span></p>
+            </div>
+        </section>
+        
+        <footer>
+            <p>Expression Notation Converter | All algorithms preserved in original form</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Simple animation triggers when scrolling
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            cards.forEach(card => {
+                card.style.opacity = 0;
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

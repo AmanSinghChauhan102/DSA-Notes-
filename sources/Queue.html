@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queue Data Structure</title>
+    <style>
+        :root {
+            --primary: #0984e3;
+            --secondary: #74b9ff;
+            --accent: #fd79a8;
+            --light: #f8f9fa;
+            --dark: #2d3436;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #d63031;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #f5f6fa;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        
+        h1 {
+            color: var(--primary);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: var(--secondary);
+            font-size: 1.1rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary);
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-top: 0;
+            font-size: 1.6rem;
+        }
+        
+        h3 {
+            color: var(--accent);
+            margin-top: 20px;
+            font-size: 1.3rem;
+        }
+        
+        .example {
+            background: #f0f5ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 3px solid var(--accent);
+            animation: slideIn 0.5s ease-in-out;
+        }
+        
+        .operation {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f8f9fa;
+            border-left: 3px solid var(--success);
+        }
+        
+        .operation h4 {
+            margin-top: 0;
+            color: var(--success);
+        }
+        
+        .code-container {
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        pre {
+            background: #2d3436;
+            color: #dfe6e9;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            tab-size: 4;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        
+        .queue-visualization {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        .queue-items {
+            display: flex;
+            min-width: 300px;
+        }
+        
+        .queue-item {
+            width: 60px;
+            height: 60px;
+            background: var(--secondary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            animation: popIn 0.5s ease-in-out;
+        }
+        
+        .queue-item.empty {
+            background: #b2bec3;
+            color: transparent;
+            position: relative;
+        }
+        
+        .queue-item.empty::after {
+            content: 'Empty';
+            position: absolute;
+            color: #636e72;
+            font-size: 0.7rem;
+            font-weight: normal;
+        }
+        
+        .queue-item.front {
+            border: 3px solid var(--success);
+            transform: scale(1.1);
+        }
+        
+        .queue-item.rear {
+            border: 3px solid var(--accent);
+            transform: scale(1.1);
+        }
+        
+        .queue-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+        
+        .queue-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: #0767b3;
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button.enqueue {
+            background: var(--success);
+        }
+        
+        button.dequeue {
+            background: var(--danger);
+        }
+        
+        button.peek {
+            background: var(--warning);
+            color: var(--dark);
+        }
+        
+        button.check {
+            background: var(--secondary);
+        }
+        
+        input {
+            padding: 10px;
+            border: 1px solid #b2bec3;
+            border-radius: 5px;
+            flex-grow: 1;
+            min-width: 150px;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .status.empty {
+            background: #ffeaa7;
+            color: var(--dark);
+        }
+        
+        .status.full {
+            background: #ff7675;
+            color: white;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .card {
+                padding: 20px 15px;
+            }
+            
+            .queue-item {
+                width: 50px;
+                height: 50px;
+                font-size: 1rem;
+            }
+            
+            .queue-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Queue Data Structure</h1>
+            <p class="subtitle">First-In-First-Out (FIFO) Principle</p>
+        </header>
+        
+        <section class="card">
+            <h2>Understanding Queues</h2>
+            <p>A queue is a linear data structure that follows the First-In-First-Out (FIFO) principle. It works like a line of people waiting for a service, where the person who arrives first is served first.</p>
+            
+            <h3>Example</h3>
+            <div class="example">
+                <p>Imagine a ticket counter at a movie theater. People arrive and join the queue, waiting for their turn to buy tickets. The person who arrives first is served first, and the person who arrives last is served last.</p>
+            </div>
+            
+            <h3>Permissible Operations on Queue</h3>
+            <p>The following are the permissible operations on a queue:</p>
+            
+            <div class="operation">
+                <h4>Enqueue</h4>
+                <p>Adding an element to the end of the queue. (e.g., a person joining the line)</p>
+            </div>
+            
+            <div class="operation">
+                <h4>Dequeue</h4>
+                <p>Removing an element from the front of the queue. (e.g., a person buying a ticket and leaving the line)</p>
+            </div>
+            
+            <div class="operation">
+                <h4>Peek</h4>
+                <p>Viewing the element at the front of the queue without removing it. (e.g., checking who is next in line)</p>
+            </div>
+            
+            <div class="operation">
+                <h4>IsEmpty</h4>
+                <p>Checking if the queue is empty. (e.g., checking if there is anyone in line)</p>
+            </div>
+            
+            <div class="operation">
+                <h4>IsFull</h4>
+                <p>Checking if the queue is full. (e.g., checking if the line is full and no more people can join)</p>
+            </div>
+            
+            <h3>Simplest Example</h3>
+            <div class="example">
+                <p>Let's consider a simple example of a queue with 5 elements:</p>
+                <p>Initial Queue: Empty</p>
+                <p>1. Enqueue 2: Queue = [2]</p>
+                <p>2. Enqueue 5: Queue = [2, 5]</p>
+                <p>3. Enqueue 8: Queue = [2, 5, 8]</p>
+                <p>4. Peek: Front element is 2</p>
+                <p>5. Dequeue: Queue = [5, 8]</p>
+                <p>6. Dequeue: Queue = [8]</p>
+                <p>7. IsEmpty: Queue is not empty</p>
+                <p>8. IsFull: Queue is not full (assuming maximum size is 5)</p>
+                <p>This example illustrates the basic operations that can be performed on a queue.</p>
+            </div>
+        </section>
+        
+        <section class="card">
+            <h2>Interactive Queue Visualization</h2>
+            <div class="queue-visualization">
+                <div class="queue-items" id="queueDisplay">
+                    <!-- Queue items will be inserted here by JavaScript -->
+                </div>
+            </div>
+            <div class="queue-labels">
+                <span id="frontLabel">Front: -</span>
+                <span id="rearLabel">Rear: -</span>
+            </div>
+            
+            <div class="queue-controls">
+                <input type="number" id="queueInput" placeholder="Enter a number">
+                <button class="enqueue" onclick="enqueue()">Enqueue</button>
+                <button class="dequeue" onclick="dequeue()">Dequeue</button>
+                <button class="peek" onclick="peek()">Peek</button>
+                <button class="check" onclick="checkEmpty()">IsEmpty?</button>
+                <button class="check" onclick="checkFull()">IsFull?</button>
+            </div>
+            
+            <div id="queueStatus" class="status"></div>
+        </section>
+        
+        <section class="card">
+            <h2>Queue Implementation in C</h2>
+            <div class="code-container">
+                <pre id="queueCode">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt; // For exit()
+
+#define MAX_SIZE 5 // Define the maximum size of the queue
+
+// Global variables
+int queue_array[MAX_SIZE];
+int front = -1;
+int rear = -1;
+
+// Function prototypes
+void enqueue(int value);
+void dequeue();
+void display();
+
+int main() {
+    int choice, value;
+
+    while (1) { // Infinite loop for the menu
+        printf("\n--- QUEUE MENU ---\n");
+        printf("1. Enqueue (Add an element)\n");
+        printf("2. Dequeue (Remove an element)\n");
+        printf("3. Display the queue\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the value to add: ");
+                scanf("%d", &value);
+                enqueue(value);
+                break;
+            case 2:
+                dequeue();
+                break;
+            case 3:
+                display();
+                break;
+            case 4:
+                printf("Exiting the program.\n");
+                exit(0); // Terminate the program
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    }
+
+    return 0;
+}
+
+/**
+ * @brief Adds an element to the rear of the queue.
+ * @param value The integer value to be added.
+ */
+void enqueue(int value) {
+    // 1. Check if the queue is full
+    if (rear == MAX_SIZE - 1) {
+        printf("Error: Queue is full (Overflow)!\n");
+        return;
+    }
+    
+    // 2. If the queue is empty, set front to 0
+    if (front == -1) {
+        front = 0;
+    }
+
+    // 3. Increment rear and add the element
+    rear = rear + 1;
+    queue_array[rear] = value;
+    printf("%d was successfully enqueued.\n", value);
+}
+
+/**
+ * @brief Removes the element from the front of the queue.
+ */
+void dequeue() {
+    // 1. Check if the queue is empty
+    // The condition 'front > rear' handles the case where all elements have been dequeued.
+    if (front == -1 || front > rear) {
+        printf("Error: Queue is empty (Underflow)!\n");
+        // Optional: Reset queue if it becomes empty
+        if (front > rear) {
+            front = rear = -1;
+        }
+        return;
+    }
+
+    // 2. Remove the element by incrementing the front pointer
+    printf("%d was dequeued from the queue.\n", queue_array[front]);
+    front = front + 1;
+}
+
+/**
+ * @brief Displays all the elements currently in the queue.
+ */
+void display() {
+    // 1. Check if the queue is empty
+    if (front == -1 || front > rear) {
+        printf("Queue is empty.\n");
+        return;
+    }
+
+    // 2. Print all elements from front to rear
+    printf("Queue elements are: ");
+    for (int i = front; i <= rear; i++) {
+        printf("%d ", queue_array[i]);
+    }
+    printf("\n");
+}</pre>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // Queue implementation for visualization
+        const MAX_SIZE = 5;
+        let queue = [];
+        let front = -1;
+        let rear = -1;
+        
+        function updateQueueDisplay() {
+            const queueDisplay = document.getElementById('queueDisplay');
+            queueDisplay.innerHTML = '';
+            
+            // Show empty slots if queue is empty
+            if (front === -1) {
+                for (let i = 0; i < MAX_SIZE; i++) {
+                    const emptyItem = document.createElement('div');
+                    emptyItem.className = 'queue-item empty';
+                    queueDisplay.appendChild(emptyItem);
+                }
+                document.getElementById('frontLabel').textContent = 'Front: -';
+                document.getElementById('rearLabel').textContent = 'Rear: -';
+                return;
+            }
+            
+            // Display queue elements
+            for (let i = 0; i < MAX_SIZE; i++) {
+                const item = document.createElement('div');
+                
+                if (i >= front && i <= rear) {
+                    item.className = 'queue-item';
+                    item.textContent = queue[i];
+                    
+                    if (i === front) {
+                        item.classList.add('front');
+                    }
+                    if (i === rear) {
+                        item.classList.add('rear');
+                    }
+                } else {
+                    item.className = 'queue-item empty';
+                }
+                
+                queueDisplay.appendChild(item);
+            }
+            
+            document.getElementById('frontLabel').textContent = `Front: ${front}`;
+            document.getElementById('rearLabel').textContent = `Rear: ${rear}`;
+        }
+        
+        function enqueue() {
+            const input = document.getElementById('queueInput');
+            const value = parseInt(input.value);
+            const status = document.getElementById('queueStatus');
+            
+            if (isNaN(value)) {
+                status.textContent = 'Please enter a valid number!';
+                status.style.backgroundColor = '#ff7675';
+                return;
+            }
+            
+            if (rear === MAX_SIZE - 1) {
+                status.textContent = 'Queue is full (Overflow)!';
+                status.className = 'status full';
+                return;
+            }
+            
+            if (front === -1) {
+                front = 0;
+            }
+            
+            rear++;
+            queue[rear] = value;
+            
+            status.textContent = `${value} was enqueued successfully!`;
+            status.style.backgroundColor = '#55efc4';
+            status.style.color = '#2d3436';
+            
+            input.value = '';
+            updateQueueDisplay();
+        }
+        
+        function dequeue() {
+            const status = document.getElementById('queueStatus');
+            
+            if (front === -1 || front > rear) {
+                status.textContent = 'Queue is empty (Underflow)!';
+                status.className = 'status empty';
+                
+                // Reset queue if empty
+                if (front > rear) {
+                    front = rear = -1;
+                    queue = [];
+                }
+                updateQueueDisplay();
+                return;
+            }
+            
+            const value = queue[front];
+            front++;
+            
+            status.textContent = `${value} was dequeued from the queue!`;
+            status.style.backgroundColor = '#fab1a0';
+            status.style.color = '#2d3436';
+            
+            // Reset queue if empty after dequeue
+            if (front > rear) {
+                front = rear = -1;
+                queue = [];
+            }
+            
+            updateQueueDisplay();
+        }
+        
+        function peek() {
+            const status = document.getElementById('queueStatus');
+            
+            if (front === -1 || front > rear) {
+                status.textContent = 'Queue is empty, nothing to peek!';
+                status.className = 'status empty';
+                return;
+            }
+            
+            status.textContent = `Front element is ${queue[front]}`;
+            status.style.backgroundColor = '#ffeaa7';
+            status.style.color = '#2d3436';
+        }
+        
+        function checkEmpty() {
+            const status = document.getElementById('queueStatus');
+            
+            if (front === -1 || front > rear) {
+                status.textContent = 'Queue is empty!';
+                status.className = 'status empty';
+            } else {
+                status.textContent = 'Queue is not empty!';
+                status.style.backgroundColor = '#55efc4';
+                status.style.color = '#2d3436';
+            }
+        }
+        
+        function checkFull() {
+            const status = document.getElementById('queueStatus');
+            
+            if (rear === MAX_SIZE - 1) {
+                status.textContent = 'Queue is full!';
+                status.className = 'status full';
+            } else {
+                status.textContent = 'Queue is not full!';
+                status.style.backgroundColor = '#55efc4';
+                status.style.color = '#2d3436';
+            }
+        }
+        
+        // Initialize the queue display
+        updateQueueDisplay();
+    </script>
+</body>
+</html>
